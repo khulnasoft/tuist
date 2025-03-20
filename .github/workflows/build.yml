@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+
+jobs:
+  macos:
+    name: "Cache"
+    runs-on: ghcr.io/khulnasoft/macos-runner:sonoma
+    steps:
+      - uses: actions/checkout@v4
+      - name: printenv
+        run: printenv
+      - name: Select Xcode 16.1
+        run: sudo xcodes select 16.1
+      - uses: jdx/mise-action@v2
+        with:
+          experimental: true
+      - name: Install Tuist dependencies
+        run: mise x -- tuist install
+      - name: Print hashes
+        run: mise x -- tuist cache --print-hashes
+      - name: Cache
+        run: mise x -- tuist cache
